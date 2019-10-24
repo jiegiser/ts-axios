@@ -1,16 +1,15 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const webpack = require('webpack')
-const webpackDevMIddleware = require('webpack-dev-middleware')
+const webpackDevMiddleware = require('webpack-dev-middleware')
 const webpackHotMiddleware = require('webpack-hot-middleware')
 const WebpackConfig = require('./webpack.config')
 
 const app = express()
 const compiler = webpack(WebpackConfig)
-const router = express.Router()
 
 app.use(
-  webpackDevMIddleware(compiler, {
+  webpackDevMiddleware(compiler, {
     publicPath: '/__build__/',
     stats: {
       colors: true,
@@ -18,19 +17,29 @@ app.use(
     }
   })
 )
-app.use(webpackHotMiddleware(compiler))
-app.use(express.static(__dirname))
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: trus }))
 
-router.get('./simple/get', function(req, res) {
+app.use(webpackHotMiddleware(compiler))
+
+app.use(express.static(__dirname))
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
+
+const router = express.Router()
+
+router.get('/simple/get', function(req, res) {
   res.json({
-    msg: 'hello world'
+    msg: `hello world`
   })
 })
+
+router.get('/base/get', function(req, res) {
+  res.json(req.query)
+})
+
 app.use(router)
 
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 8881
 module.exports = app.listen(port, () => {
-  console.log(`Server listning on http://localhost:${port},Ctrl+C to stop`)
+  console.log(`Server listening on http://localhost:${port}, Ctrl+C to stop`)
 })
